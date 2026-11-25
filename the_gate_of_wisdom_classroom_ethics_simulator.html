@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Gate of Wisdom — Ethical & Theological Jurisprudence Simulator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Newsreader', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            obsidian: '#0d0c0a',
+            panel: '#161410',
+            panelHover: '#1d1a15',
+            borderWarm: '#2a261e',
+            amberAccent: '#f59e0b',
+            amberMuted: '#b47814',
+            emeraldAccent: '#10b981',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body {
+      background-color: #0d0c0a;
+      color: #f3efe6;
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .tracking-widest-plus {
+      letter-spacing: 0.14em;
+    }
+    .card-surface {
+      background-color: #161410;
+      border: 1px solid #2a261e;
+    }
+    .card-surface-interactive {
+      background-color: #161410;
+      border: 1px solid #2a261e;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .card-surface-interactive:hover {
+      background-color: #1c1914;
+      border-color: #443d30;
+    }
+    .ruling-selected {
+      border-color: #f59e0b !important;
+      box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.35), 0 12px 32px -12px rgba(245, 158, 11, 0.25);
+      background-color: #1a1711 !important;
+    }
+    .emerald-investigated {
+      border-color: rgba(16, 185, 129, 0.45) !important;
+      background-color: rgba(16, 185, 129, 0.06) !important;
+    }
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .animate-reveal {
+      animation: fadeSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0d0c0a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2a261e;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #423c30;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-amber-500/30 selection:text-amber-200">
+
+  <!-- PERSISTENT TOP FACULTY & INSTITUTIONAL HEADER BAR -->
+  <header class="w-full border-b border-[#2a261e] bg-[#12100d]/95 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/35 flex items-center justify-center shrink-0 text-amber-400">
+          <!-- Scales / Gate Emblem SVG -->
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v18" />
+            <path d="M5 7h14" />
+            <path d="M5 7l-3 7h6l-3-7z" />
+            <path d="M19 7l-3 7h6l-3-7z" />
+            <path d="M8 21h8" />
+          </svg>
+        </div>
+        <div>
+          <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+            <span class="font-bold text-sm sm:text-base text-[#f5f0e6] tracking-tight">Rev. Anand S. Deshbhratar</span>
+            <span class="hidden sm:inline text-[#4c4538]">•</span>
+            <span class="text-xs font-medium text-amber-400/95">A/Prof. of Philosophy and Theology</span>
+          </div>
+          <p class="text-[11px] sm:text-xs text-[#9c9281] tracking-wide">
+            Centre for Global Leadership Development, Bangalore
+          </p>
+        </div>
+      </div>
+
+      <!-- Classroom Projector & Quick Reset Controls -->
+      <div class="flex items-center gap-2 self-start sm:self-center">
+        <button id="toggleTextSizeBtn" onclick="toggleProjectorScale()" title="Enlarge text for classroom projection"
+          class="px-2.5 py-1.5 rounded-lg border border-[#2a261e] bg-[#171511] hover:border-amber-500/40 text-[11px] font-mono uppercase tracking-wider text-[#b7ad9c] hover:text-amber-300 transition flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" />
+            <path d="M8 21h8M12 17v4" />
+          </svg>
+          <span id="projectorLabel">Classroom View: Standard</span>
+        </button>
+        <button id="headerHomeBtn" onclick="returnToTitle()" class="hidden px-2.5 py-1.5 rounded-lg border border-[#2a261e] bg-[#171511] hover:border-amber-500/40 text-[11px] font-mono uppercase tracking-wider text-[#9c9281] hover:text-[#f3efe6] transition">
+          Syllabus
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main id="appContainer" class="flex-1 w-full max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8 transition-all duration-200">
+    <!-- Dynamic Screen Injected Here -->
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="w-full border-t border-[#1f1c16] py-4 px-4 text-center text-[11px] text-[#6d6558] font-mono tracking-wider">
+    THE GATE OF WISDOM • CLASSROOM ETHICAL &amp; THEOLOGICAL JURISPRUDENCE LAB
+  </footer>
+
+  <script>
+    // =========================================================================
+    // CURRICULUM & CASE DATA (2 COMPLETE 3-CASE MODULES FOR CLASSROOM USE)
+    // =========================================================================
+    const CASE_SETS = {
+      covenant: {
+        id: 'covenant',
+        badge: 'MODULE I • BIBLICAL LAW & COVENANT ETHICS',
+        title: 'Torah, Gospel & The Elders at the Gate',
+        subtitle: 'Examine tensions between written statute, human vulnerability, and covenantal mercy across three foundational cases.',
+        cases: [
+          {
+            id: 'cov-1',
+            icon: 'grain',
+            title: 'The Sabbath Grain & The Starving Stranger',
+            scripture: 'Exod 23:12; Deut 23:24–25; Mark 2:23–28',
+            premise:
+              'On the Sabbath morning, village watchmen apprehend a displaced day-laborer and his two children plucking and rubbing heads of barley in a landowner’s field. The landowner demands strict Sabbath enforcement at the gate.',
+            hearCost: 5,
+            searchCost: 5,
+            hiddenFact:
+              'The family fled a famine three villages east. The landowner delayed paying day-wages before sundown Friday (violating Lev 19:13), leaving them without food for the Sabbath.',
+            scripturalPrecedent:
+              'Deut 23:25 permits a hungry neighbor to pluck grain by hand, and Exod 23:12 states the Sabbath exists so that the resident alien and laborer "may be refreshed."',
+            rulings: {
+              A: {
+                title: 'Uphold the Sabbath prohibition strictly',
+                desc: 'Reaping and threshing by hand on the seventh day violates Sabbath rest. Impose a public fine to deter disorder.',
+                precedent: 'Sacred statute admits no situational exception.',
+                scores: { justice: 3, mercy: -2, community: 0 },
+                reaction:
+                  'The watchmen nod in approval of strict order, yet the laborer’s children faint before sundown. Elders murmur that the Sabbath has become a burden rather than a blessing.'
+              },
+              B: {
+                title: 'Acquit the stranger on grounds of necessity',
+                desc: 'Dismiss the landowner’s charge immediately; starvation overrides ritual boundary.',
+                precedent: 'Human survival supersedes ceremonial observance.',
+                scores: { justice: 0, mercy: 3, community: 1 },
+                reaction:
+                  'The father bows in tearful gratitude, though wealthy landowners grumble outside the gate that property boundaries and Sabbath discipline have been weakened.'
+              },
+              C_HEAR: {
+                title: 'Acquit & compel the landowner’s withheld wage',
+                desc: 'Expose the unpaid Friday wage; dismiss the charge and require immediate restitution for the family’s Sabbath meal.',
+                precedent: 'One who withholds wages cannot weaponize the Sabbath against the hungry.',
+                scores: { justice: 3, mercy: 3, community: 2 },
+                reaction:
+                  'A hush falls over the gate as the withheld silver is paid out. The family eats in dignity, and employers across the town take note.'
+              },
+              C_SEARCH: {
+                title: 'Invoke Deut 23:25 & Exod 23:12 Sabbath refreshment',
+                desc: 'Rule that hand-plucking for immediate hunger is lawful gleaning, and Sabbath rest is meant to refresh the alien.',
+                precedent: 'The Sabbath was made for human restoration, not deprivation.',
+                scores: { justice: 2, mercy: 3, community: 3 },
+                reaction:
+                  'Scholars at the gate affirm your harmonization of Torah texts. The landowner withdraws his complaint in humbled silence.'
+              },
+              C_BOTH: {
+                title: 'Restore withheld wages & affirm Sabbath refreshment',
+                desc: 'Integrate Deut 23:25 and Lev 19:13: vindicate the stranger’s gleaning as lawful Sabbath refreshment and compel the landowner to pay Friday’s withheld wages.',
+                precedent: 'True Sabbath law unites covenant justice for the worker with mercy for the hungry.',
+                scores: { justice: 4, mercy: 4, community: 4 },
+                reaction:
+                  'Both elders and townsfolk recognize a landmark synthesis of Law and Mercy. The laborer receives his rightful wage, and the Sabbath is honored as a day of life.'
+              }
+            }
+          },
+          {
+            id: 'cov-2',
+            icon: 'shield',
+            title: 'The Sanctuary of the Accidental Manslayer',
+            scripture: 'Num 35:9–28; Josh 20:1–6; Rom 13:1–4',
+            premise:
+              'While felling timber together, an iron axe-head slips from a young carpenter’s handle and fatally strikes a respected clan elder. The deceased’s brother—the Blood-Avenger—stands armed at the gate demanding immediate execution. The carpenter is your nephew.',
+            hearCost: 5,
+            searchCost: 5,
+            hiddenFact:
+              'Witnesses confirm there was no prior enmity between them; however, your nephew noticed the axe-head was loose earlier that morning and kept chopping to finish before noon.',
+            scripturalPrecedent:
+              'Num 35:22–25 grants sanctuary in a City of Refuge for unintended killing, yet Exod 23:8 and Deut 16:19 strictly forbid partiality toward kin in judgment.',
+            rulings: {
+              A: {
+                title: 'Surrender him to the Blood-Avenger',
+                desc: 'A life has been taken; refuse sanctuary so no one accuses you of shielding your own nephew.',
+                precedent: 'Blood demands blood, even at the cost of one’s own household.',
+                scores: { justice: 2, mercy: -3, community: -1 },
+                reaction:
+                  'Your kin weep in bitter anguish as the Blood-Avenger claims vengeance. Many whisper that fear of appearing biased led you to abandon Torah’s refuge law.'
+              },
+              B: {
+                title: 'Grant unconditional sanctuary immediately',
+                desc: 'Bar the gate against the Blood-Avenger and declare your nephew innocent of murder.',
+                precedent: 'An unintended blow carries no guilt.',
+                scores: { justice: -1, mercy: 3, community: -2 },
+                reaction:
+                  'The bereaved clan erupts in fury, accusing you of family favoritism. Peace in the town fractures along clan lines.'
+              },
+              C_HEAR: {
+                title: 'Grant sanctuary with negligent-restitution penance',
+                desc: 'Shield him from execution, but hold him accountable for ignoring the loose axe-head by mandating lifelong support for the elder’s widow.',
+                precedent: 'Unintended harm still bears moral accountability for carelessness.',
+                scores: { justice: 3, mercy: 2, community: 2 },
+                reaction:
+                  'The bereaved family sees that carelessness is not excused, though rumors of kinship bias still linger among rival clans.'
+              },
+              C_SEARCH: {
+                title: 'Recuse yourself & convene impartial assembly (Num 35:24)',
+                desc: 'Step aside under Deut 16:19 and let neutral elders adjudicate City of Refuge protection under Num 35:24.',
+                precedent: 'A judge connected by blood must yield the seat to preserve impartial refuge.',
+                scores: { justice: 3, mercy: 2, community: 3 },
+                reaction:
+                  'Stepping down from the bench silences every accusation of nepotism. The neutral assembly upholds sanctuary lawfully.'
+              },
+              C_BOTH: {
+                title: 'Recuse yourself; propose refuge with widow-restitution',
+                desc: 'Hand judgment to impartial elders under Num 35:24 & Deut 16:19, placing on record both the lack of malice and the negligence of the loose axe-head.',
+                precedent: 'Impartial sanctuary distinguishes malice from negligence without perverting justice for kin.',
+                scores: { justice: 4, mercy: 4, community: 4 },
+                reaction:
+                  'The neutral council grants City of Refuge protection while binding your nephew to care for the elder’s household. Even the Blood-Avenger lowers his weapon in respect.'
+              }
+            }
+          },
+          {
+            id: 'cov-3',
+            icon: 'scales',
+            title: 'The Forgiven Debt & The Unforgiving Steward',
+            scripture: 'Lev 25:35–37; Matt 18:21–35; Deut 15:1–2',
+            premise:
+              'A merchant whose massive bankruptcy was recently forgiven by the town council now drags an impoverished weaver to the gate for failing to repay a tiny loan of twenty silver pieces—demanding the weaver’s loom as collateral.',
+            hearCost: 5,
+            searchCost: 5,
+            hiddenFact:
+              'The merchant’s own grain warehouse is secretly full; he wants the weaver’s loom to force the weaver’s family into indentured labor before harvest season.',
+            scripturalPrecedent:
+              'Deut 24:6 forbids taking a millstone or livelihood tool in pledge ("for that would be taking a life in pledge"), and Matt 18:33 binds forgiven debtors to extend mercy.',
+            rulings: {
+              A: {
+                title: 'Enforce the written loan contract',
+                desc: 'A signed debt is a signed debt. Permit the merchant to seize the loom until the twenty silver pieces are paid.',
+                precedent: 'Commercial contracts stand independent of personal grace.',
+                scores: { justice: 2, mercy: -3, community: -2 },
+                reaction:
+                  'The weaver’s family loses their only means of bread. Across the marketplace, the wealthy celebrate contract rigidity while the poor lose faith in the gate.'
+              },
+              B: {
+                title: 'Cancel the weaver’s debt unilaterally',
+                desc: 'Void the twenty-silver note entirely in view of the mercy the merchant himself received.',
+                precedent: 'Those shown grace forfeit the right to collect debts.',
+                scores: { justice: 0, mercy: 3, community: 1 },
+                reaction:
+                  'The weaver rejoices, though lenders warn that arbitrary cancellation of valid contracts could freeze credit across the community.'
+              },
+              C_HEAR: {
+                title: 'Block loom seizure; structure harvest-share repayment',
+                desc: 'Expose the merchant’s predatory labor scheme, protect the loom, and set a small, interest-free repayment schedule.',
+                precedent: 'Contracts may not be weaponized to manufacture servitude.',
+                scores: { justice: 3, mercy: 3, community: 2 },
+                reaction:
+                  'The merchant’s scheme is thwarted in public view. The weaver keeps his loom and repays honorably over time.'
+              },
+              C_SEARCH: {
+                title: 'Invoke Deut 24:6 & revoke council debt-clemency',
+                desc: 'Forbid seizing a tool of livelihood under Deut 24:6, and warn that mercy received from the council carries a covenant obligation.',
+                precedent: 'No creditor may seize the instrument by which a neighbor lives.',
+                scores: { justice: 3, mercy: 2, community: 3 },
+                reaction:
+                  'The elders nod as Deut 24:6 is read aloud. Taking a weaver’s loom is declared equivalent to taking his life.'
+              },
+              C_BOTH: {
+                title: 'Protect the loom (Deut 24:6) & bind mercy to grace received',
+                desc: 'Prohibit seizing the loom as a life-pledge, expose the coercive scheme, and mandate an interest-free grace period matching the clemency shown to the merchant.',
+                precedent: 'Covenant economy forbids turning forgiven grace into predatory extraction.',
+                scores: { justice: 4, mercy: 4, community: 4 },
+                reaction:
+                  'The gate erupts in affirmation. The weaver’s livelihood is preserved, fair credit survives, and the moral integrity of communal mercy is sealed.'
+              }
+            }
+          }
+        ]
+      },
+
+      philosophy: {
+        id: 'philosophy',
+        badge: 'MODULE II • GLOBAL LEADERSHIP & PHILOSOPHICAL ETHICS',
+        title: 'Duty, Consequence & Civic Virtue',
+        subtitle: 'Navigate classic and global ethical dilemmas pitting Kantian duty, utilitarian outcomes, and virtue ethics in public leadership.',
+        cases: [
+          {
+            id: 'phil-1',
+            icon: 'lantern',
+            title: 'The Fugitive Scholar at the Border Gate',
+            scripture: 'Kant (Groundwork) vs. Aquinas & Bonhoeffer',
+            premise:
+              'A peaceful dissident scholar seeks refuge inside your academic sanctuary. Moments later, armed state agents arrive at the gate demanding directly: "Is the scholar inside?"',
+            hearCost: 5,
+            searchCost: 5,
+            hiddenFact:
+              'The scholar carries research documenting contaminated municipal water supplies that could save thousands of lives if published tonight—and will be destroyed if seized.',
+            scripturalPrecedent:
+              'While Kantian rigorism forbids any untruth, Augustine, Aquinas, and Bonhoeffer distinguish truth-telling owed to rightful authority from speech before unjust coercion (cf. Exod 1:17–20, Rahab).',
+            rulings: {
+              A: {
+                title: 'Answer truthfully without evasion',
+                desc: 'Adhere strictly to the universal duty against lying; confirm the scholar is inside and trust Providence with the outcome.',
+                precedent: 'One must never tell a falsehood, even to avert grave harm.',
+                scores: { justice: 2, mercy: -3, community: -2 },
+                reaction:
+                  'The agents immediately arrest the scholar and confiscate the water-safety data. Students debate whether moral purity came at the expense of innocent lives.'
+              },
+              B: {
+                title: 'Misdirect the agents away from the gate',
+                desc: 'State confidently that the scholar fled toward the river road, prioritizing life-saving consequence over verbal accuracy.',
+                precedent: 'When truth is weaponized for oppression, protective deception is warranted.',
+                scores: { justice: 1, mercy: 3, community: 2 },
+                reaction:
+                  'The scholar escapes safely, though some faculty worry whether normalizing strategic deception erodes institutional trust.'
+              },
+              C_HEAR: {
+                title: 'Invoke sanctuary jurisdiction to protect the water data',
+                desc: 'Refuse entry without a judicial warrant, buying crucial hours for the public health findings to be transmitted.',
+                precedent: 'Institutional integrity shields truth-tellers serving the common good.',
+                scores: { justice: 3, mercy: 3, community: 3 },
+                reaction:
+                  'While the agents await a magistrate’s seal, the water report reaches the public press, saving the city from an outbreak.'
+              },
+              C_SEARCH: {
+                title: 'Challenge the agents’ moral right to the truth',
+                desc: 'Following Bonhoeffer and Hebrew midwives, refuse to validate an unjust interrogation while maintaining personal integrity.',
+                precedent: 'Truthfulness is a relational responsibility, not a weapon owed to tyranny.',
+                scores: { justice: 3, mercy: 2, community: 3 },
+                reaction:
+                  'Your principled refusal forces the agents to withdraw without a warrant, upholding both conscience and courage.'
+              },
+              C_BOTH: {
+                title: 'Assert lawful sanctuary & withhold truth from unjust force',
+                desc: 'Stand on Bonhoeffer’s ethics of responsibility and civic sanctuary: deny warrantless entry and safeguard both the scholar and the life-saving public water report.',
+                precedent: 'Responsible leadership refuses complicity with tyranny while guarding the common good.',
+                scores: { justice: 4, mercy: 4, community: 4 },
+                reaction:
+                  'The agents depart empty-handed, the public water crisis is averted, and the assembly recognizes moral courage wedded to civic wisdom.'
+              }
+            }
+          },
+          {
+            id: 'phil-2',
+            icon: 'water',
+            title: 'The Dry-Season Reservoir & The Upstream Estate',
+            scripture: 'Aristotle (Politics), Amartya Sen & Creation Ethics',
+            premise:
+              'During a severe drought, an upstream industrial estate legally owns water rights to a river feeding three downstream farming villages. The estate refuses to reduce irrigation for export crops.',
+            hearCost: 5,
+            searchCost: 5,
+            hiddenFact:
+              'The estate’s senior director is a major benefactor funding your institution’s new ethics library—and quietly hints that a ruling against him will halt the endowment.',
+            scripturalPrecedent:
+              'Aristotelian distributive justice, Catholic Social Teaching (Universal Destination of Goods), and Amartya Sen’s capability approach hold that property rights are subordinate to basic human flourishing.',
+            rulings: {
+              A: {
+                title: 'Uphold the estate’s legal title',
+                desc: 'Respect existing property contracts; encourage voluntary charity from the estate rather than compulsion.',
+                precedent: 'Legal property rights remain inviolable even in scarcity.',
+                scores: { justice: 1, mercy: -3, community: -2 },
+                reaction:
+                  'Downstream wells run dry within weeks. The new library wing breaks ground, shadowed by whispers that endowment money bought silence.'
+              },
+              B: {
+                title: 'Seize and redistribute the water immediately',
+                desc: 'Override all private water titles and open the sluice gates fully to the villages.',
+                precedent: 'Survival needs abolish private resource claims.',
+                scores: { justice: 1, mercy: 3, community: 1 },
+                reaction:
+                  'The villages are saved, though sudden confiscation sparks prolonged legal chaos and bitterness across the watershed.'
+              },
+              C_HEAR: {
+                title: 'Disclose the benefactor conflict & mandate rationing',
+                desc: 'Publicly declare the endowment conflict of interest and institute emergency survival-first water allocation.',
+                precedent: 'Moral authority requires transparent independence from patronage.',
+                scores: { justice: 3, mercy: 3, community: 3 },
+                reaction:
+                  'Disclosing the donor pressure wins immediate public trust. The villages receive drinking water while essential orchards are sustained.'
+              },
+              C_SEARCH: {
+                title: 'Apply the Universal Destination of Goods principle',
+                desc: 'Rule that water rights carry a built-in social mortgage; prioritize drinking and subsistence crops over luxury exports.',
+                precedent: 'Private stewardship serves human capability before commercial surplus.',
+                scores: { justice: 3, mercy: 3, community: 3 },
+                reaction:
+                  'Philosophers and elders praise the tiered allocation framework, which balances subsistence priority with orderly stewardship.'
+              },
+              C_BOTH: {
+                title: 'Refuse donor influence; enact tiered capability rationing',
+                desc: 'Publicly decline conditional patronage and establish a transparent water hierarchy: human survival first, subsistence farming second, commercial surplus last.',
+                precedent: 'Distributive justice subordinates both property and patronage to human flourishing.',
+                scores: { justice: 4, mercy: 4, community: 4 },
+                reaction:
+                  'Though the benefactor withdraws his pledge, smaller civic donors rally to fund the library, and all three villages weather the drought intact.'
+              }
+            }
+          },
+          {
+            id: 'phil-3',
+            icon: 'olive',
+            title: 'The Whistleblower & The Fractured Council',
+            scripture: 'Desmond Tutu (Ubuntu), Ricoeur & Restorative Ethics',
+            premise:
+              'A junior administrator leaked confidential council minutes exposing a senior colleague’s misuse of relief funds. The senior colleague has repaid the money quietly and demands the whistleblower be expelled for breaching trust.',
+            hearCost: 5,
+            searchCost: 5,
+            hiddenFact:
+              'The junior administrator first raised the issue privately three times through official channels and was threatened with dismissal before leaking the documents.',
+            scripturalPrecedent:
+              'Restorative justice (Ubuntu) and institutional ethics distinguish malicious sabotage from last-resort conscience disclosure, requiring truth, accountability, and repair.',
+            rulings: {
+              A: {
+                title: 'Expel the whistleblower for confidentiality breach',
+                desc: 'Maintain strict organizational discipline; unauthorized leaks destroy institutional trust regardless of motive.',
+                precedent: 'Procedural loyalty overrides individual conscience.',
+                scores: { justice: -2, mercy: -2, community: -1 },
+                reaction:
+                  'Silence returns to the council chamber, but junior staff learn that integrity is punished while power protects itself.'
+              },
+              B: {
+                title: 'Exonerate the whistleblower & dismiss the senior colleague',
+                desc: 'Publicly shame and remove the senior official while celebrating the leak without review.',
+                precedent: 'Exposing corruption justifies any breach of protocol.',
+                scores: { justice: 2, mercy: 0, community: -1 },
+                reaction:
+                  'Public applause greets the removal, yet deep factional distrust lingers without a process for truth and reconciliation.'
+              },
+              C_HEAR: {
+                title: 'Protect the whistleblower; establish a safe reporting channel',
+                desc: 'Recognize that internal channels failed, shield the junior administrator from retaliation, and reform oversight.',
+                precedent: 'When internal accountability fails, conscience cannot be punished.',
+                scores: { justice: 3, mercy: 3, community: 3 },
+                reaction:
+                  'Staff morale rebounds as safe reporting protections are codified and the junior administrator is retained.'
+              },
+              C_SEARCH: {
+                title: 'Convene a restorative truth-and-accountability circle',
+                desc: 'Require transparent public accounting from the senior colleague alongside structured mediation to rebuild communal trust.',
+                precedent: 'Ubuntu justice repairs both institutional truth and human dignity.',
+                scores: { justice: 3, mercy: 3, community: 3 },
+                reaction:
+                  'Through honest reckoning and public restitution, the council avoids bitter factionalism.'
+              },
+              C_BOTH: {
+                title: 'Vindicate good-faith conscience & enact restorative reform',
+                desc: 'Exonerate the whistleblower whose internal warnings were suppressed, require public accountability from the senior official, and institute an independent ethics ombudsperson.',
+                precedent: 'True institutional peace rests on protected conscience, transparent accountability, and restorative repair.',
+                scores: { justice: 4, mercy: 4, community: 4 },
+                reaction:
+                  'The assembly rises in unified endorsement. Both integrity and restorative grace are woven into the institution’s charter.'
+              }
+            }
+          }
+        ]
+      }
+    };
+
+    // =========================================================================
+    // APPLICATION STATE
+    // =========================================================================
+    const state = {
+      screen: 'title', // 'title' | 'game' | 'summary'
+      selectedSetKey: 'covenant',
+      caseIndex: 0,
+      wisdomPoints: 20,
+      maxWisdomPoints: 20,
+      heard: false,
+      searched: false,
+      selectedRulingKey: null, // 'A' | 'B' | 'C'
+      rulingConfirmed: false,
+      precedentRollOpen: true,
+      precedents: [], // { caseNum, title, text, rulingCode }
+      history: [], // detailed per-case log
+      scores: {
+        justice: 0,
+        mercy: 0,
+        community: 0
+      },
+      projectorLarge: false,
+      classroomPollMode: true,
+      pollCounts: { A: 0, B: 0, C: 0 }
+    };
+
+    // =========================================================================
+    // HELPER FUNCTIONS
+    // =========================================================================
+    function getCurrentSet() {
+      return CASE_SETS[state.selectedSetKey];
+    }
+
+    function getCurrentCase() {
+      return getCurrentSet().cases[state.caseIndex];
+    }
+
+    function getActiveRulingC(caseData) {
+      if (state.heard && state.searched) return caseData.rulings.C_BOTH;
+      if (state.heard) return caseData.rulings.C_HEAR;
+      if (state.searched) return caseData.rulings.C_SEARCH;
+      return null;
+    }
+
+    function getRulingObject(caseData, key) {
+      if (key === 'A') return caseData.rulings.A;
+      if (key === 'B') return caseData.rulings.B;
+      if (key === 'C') return getActiveRulingC(caseData);
+      return null;
+    }
+
+    function getCaseIconSvg(type) {
+      const icons = {
+        grain: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 22 16 8"/><path d="M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"/><path d="M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"/><path d="M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"/><path d="M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z"/></svg>`,
+        shield: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>`,
+        scales: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>`,
+        lantern: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2h6"/><path d="M12 2v3"/><path d="M7 8a5 5 0 0 1 10 0v7a3 3 0 0 1-3 3h-4a3 3 0 0 1-3-3V8Z"/><path d="M6 21h12"/><circle cx="12" cy="11" r="2"/></svg>`,
+        water: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>`,
+        olive: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>`
+      };
+      return icons[type] || icons.scales;
+    }
+
+    // =========================================================================
+    // ACTIONS & GAME FLOW
+    // =========================================================================
+    function toggleProjectorScale() {
+      state.projectorLarge = !state.projectorLarge;
+      const container = document.getElementById('appContainer');
+      const label = document.getElementById('projectorLabel');
+      if (state.projectorLarge) {
+        container.classList.remove('max-w-2xl');
+        container.classList.add('max-w-3xl', 'text-lg');
+        label.textContent = 'Classroom View: Large';
+      } else {
+        container.classList.remove('max-w-3xl', 'text-lg');
+        container.classList.add('max-w-2xl');
+        label.textContent = 'Classroom View: Standard';
+      }
+    }
+
+    function selectCaseSet(key) {
+      state.selectedSetKey = key;
+      render();
+    }
+
+    function togglePollMode() {
+      state.classroomPollMode = !state.classroomPollMode;
+      render();
+    }
+
+    function adjustPoll(option, delta) {
+      state.pollCounts[option] = Math.max(0, state.pollCounts[option] + delta);
+      render();
+    }
+
+    function startSession() {
+      state.screen = 'game';
+      state.caseIndex = 0;
+      state.wisdomPoints = 20;
+      state.heard = false;
+      state.searched = false;
+      state.selectedRulingKey = null;
+      state.rulingConfirmed = false;
+      state.precedents = [];
+      state.history = [];
+      state.scores = { justice: 0, mercy: 0, community: 0 };
+      state.pollCounts = { A: 0, B: 0, C: 0 };
+      document.getElementById('headerHomeBtn').classList.remove('hidden');
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function restartSession() {
+      startSession();
+    }
+
+    function returnToTitle() {
+      state.screen = 'title';
+      document.getElementById('headerHomeBtn').classList.add('hidden');
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function triggerHear() {
+      const c = getCurrentCase();
+      if (state.heard || state.rulingConfirmed || state.wisdomPoints < c.hearCost) return;
+      state.wisdomPoints -= c.hearCost;
+      state.heard = true;
+      // If C was selected, keep C selected as it upgrades
+      render();
+    }
+
+    function triggerSearch() {
+      const c = getCurrentCase();
+      if (state.searched || state.rulingConfirmed || state.wisdomPoints < c.searchCost) return;
+      state.wisdomPoints -= c.searchCost;
+      state.searched = true;
+      render();
+    }
+
+    function selectRuling(key) {
+      if (state.rulingConfirmed) return;
+      const c = getCurrentCase();
+      if (key === 'C' && !getActiveRulingC(c)) return;
+      state.selectedRulingKey = state.selectedRulingKey === key ? null : key;
+      render();
+    }
+
+    function confirmRuling() {
+      if (!state.selectedRulingKey || state.rulingConfirmed) return;
+      const c = getCurrentCase();
+      const chosen = getRulingObject(c, state.selectedRulingKey);
+      if (!chosen) return;
+
+      state.rulingConfirmed = true;
+      state.scores.justice += chosen.scores.justice;
+      state.scores.mercy += chosen.scores.mercy;
+      state.scores.community += chosen.scores.community;
+
+      const labelCode =
+        state.selectedRulingKey === 'C'
+          ? state.heard && state.searched
+            ? 'C★'
+            : 'C'
+          : state.selectedRulingKey;
+
+      state.precedents.push({
+        caseNum: state.caseIndex + 1,
+        title: c.title,
+        text: chosen.precedent,
+        code: labelCode
+      });
+
+      state.history.push({
+        caseNum: state.caseIndex + 1,
+        caseTitle: c.title,
+        scripture: c.scripture,
+        rulingKey: labelCode,
+        rulingTitle: chosen.title,
+        precedent: chosen.precedent,
+        heard: state.heard,
+        searched: state.searched
+      });
+
+      render();
+    }
+
+    function cancelRuling() {
+      state.selectedRulingKey = null;
+      render();
+    }
+
+    function nextCase() {
+      const totalCases = getCurrentSet().cases.length;
+      if (state.caseIndex + 1 < totalCases) {
+        state.caseIndex += 1;
+        state.heard = false;
+        state.searched = false;
+        state.selectedRulingKey = null;
+        state.rulingConfirmed = false;
+        state.pollCounts = { A: 0, B: 0, C: 0 };
+        render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        state.screen = 'summary';
+        render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function togglePrecedentRoll() {
+      state.precedentRollOpen = !state.precedentRollOpen;
+      render();
+    }
+
+    // =========================================================================
+    // RENDERERS
+    // =========================================================================
+    function renderTitleScreen() {
+      const activeSet = getCurrentSet();
+      return `
+        <div class="animate-reveal space-y-6">
+          <!-- Hero Card -->
+          <div class="card-surface rounded-2xl p-6 sm:p-8 relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-amber-500/[0.06] via-transparent to-emerald-500/[0.04] pointer-events-none"></div>
+            <div class="relative space-y-4">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-400 font-mono text-[11px] font-bold uppercase tracking-widest-plus">
+                <span>Interactive Classroom Jurisprudence</span>
+              </div>
+
+              <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-[#f8f4ec] leading-tight">
+                The Gate of Wisdom
+              </h1>
+
+              <p class="font-serif text-base sm:text-lg text-[#cfc6b6] leading-relaxed">
+                Sit among the elders at the city gate. Weigh competing scriptural statutes, uncover hidden human realities, and inscribe ethical precedents with your students.
+              </p>
+
+              <!-- Faculty Attribution Banner inside Front Page -->
+              <div class="rounded-xl border border-[#2f2a20] bg-[#110f0c] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <div class="text-[11px] font-mono uppercase tracking-widest text-amber-400/90">Course Convener &amp; Moderator</div>
+                  <div class="text-sm sm:text-base font-bold text-[#f3efe6] mt-0.5">Rev. Anand S. Deshbhratar</div>
+                  <div class="text-xs text-[#a59b8a]">A/Prof. of Philosophy and Theology • Centre for Global Leadership Development, Bangalore</div>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-lg self-start sm:self-center">
+                  <span>⚡ 20T WISDOM BUDGET</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Module / Case Set Selector -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono uppercase tracking-widest-plus text-[#8f8575]">Select Classroom Case Module</span>
+              <span class="text-xs font-mono text-[#6e6659]">3 Cases per Session</span>
+            </div>
+
+            <div class="grid grid-cols-1 gap-3">
+              ${Object.values(CASE_SETS)
+                .map((set) => {
+                  const isSelected = state.selectedSetKey === set.id;
+                  return `
+                    <button onclick="selectCaseSet('${set.id}')"
+                      class="text-left p-4 sm:p-5 rounded-xl border transition-all ${
+                        isSelected
+                          ? 'bg-[#1a1711] border-amber-500 shadow-[0_0_0_1px_rgba(245,158,11,0.3)]'
+                          : 'bg-[#161410] border-[#2a261e] hover:border-[#463f32]'
+                      }">
+                      <div class="flex items-start justify-between gap-3">
+                        <div class="space-y-1.5">
+                          <div class="text-[11px] font-mono uppercase tracking-widest ${
+                            isSelected ? 'text-amber-400' : 'text-[#8e8474]'
+                          }">${set.badge}</div>
+                          <div class="text-base sm:text-lg font-bold text-[#f5f0e6]">${set.title}</div>
+                          <p class="text-xs sm:text-sm text-[#a89f90] leading-relaxed">${set.subtitle}</p>
+                        </div>
+                        <div class="w-6 h-6 rounded-full border flex items-center justify-center shrink-0 mt-1 ${
+                          isSelected
+                            ? 'border-amber-400 bg-amber-500 text-obsidian'
+                            : 'border-[#3b352a] text-transparent'
+                        }">
+                          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        </div>
+                      </div>
+                    </button>
+                  `;
+                })
+                .join('')}
+            </div>
+          </div>
+
+          <!-- Classroom Mechanics Quick Guide -->
+          <div class="card-surface rounded-xl p-4 sm:p-5 space-y-3">
+            <div class="text-xs font-mono uppercase tracking-widest-plus text-[#8f8575]">Pedagogical Mechanics</div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <div class="rounded-lg bg-[#110f0c] border border-[#242019] p-3 space-y-1">
+                <div class="font-mono font-bold text-amber-400">1. BUDGET 20T</div>
+                <p class="text-[#a39a8b] leading-relaxed">You have 20T across 3 cases (4 total investigations). Choose wisely where to probe deeper.</p>
+              </div>
+              <div class="rounded-lg bg-[#110f0c] border border-[#242019] p-3 space-y-1">
+                <div class="font-mono font-bold text-emerald-400">2. HEAR &amp; SEARCH</div>
+                <p class="text-[#a39a8b] leading-relaxed">Spend 5T to <strong class="text-[#e7e1d5]">HEAR</strong> hidden human facts or <strong class="text-[#e7e1d5]">SEARCH</strong> scriptural &amp; ethical precedent.</p>
+              </div>
+              <div class="rounded-lg bg-[#110f0c] border border-[#242019] p-3 space-y-1">
+                <div class="font-mono font-bold text-amber-300">3. SYNTHESIZE (C)</div>
+                <p class="text-[#a39a8b] leading-relaxed">Unlock Ruling C—and combine <strong class="text-emerald-400">Facts + Scripture</strong> for higher-order jurisprudence.</p>
+              </div>
+            </div>
+
+            <!-- Toggle Student Vote Counter -->
+            <div class="pt-2 border-t border-[#242019] flex items-center justify-between">
+              <div>
+                <div class="text-xs font-semibold text-[#e6dfd3]">Classroom Show-of-Hands Vote Tally</div>
+                <div class="text-[11px] text-[#8d8475]">Display a live student poll bar (A / B / C) during deliberation</div>
+              </div>
+              <button onclick="togglePollMode()" class="px-3 py-1.5 rounded-lg font-mono text-xs border transition ${
+                state.classroomPollMode
+                  ? 'bg-emerald-500/15 border-emerald-500/45 text-emerald-300'
+                  : 'bg-[#110f0c] border-[#2e2920] text-[#8d8475]'
+              }">
+                ${state.classroomPollMode ? 'ENABLED' : 'OFF'}
+              </button>
+            </div>
+          </div>
+
+          <!-- Primary Start CTA -->
+          <button onclick="startSession()"
+            class="w-full py-4 px-6 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-[0.99] text-obsidian font-mono font-extrabold text-sm sm:text-base uppercase tracking-widest-plus shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-3">
+            <span>Convene Session (${activeSet.cases.length} Cases)</span>
+            <span>→</span>
+          </button>
+        </div>
+      `;
+    }
+
+    function renderTopStatusHUD() {
+      const totalCases = getCurrentSet().cases.length;
+      const pct = Math.max(0, Math.min(100, (state.wisdomPoints / state.maxWisdomPoints) * 100));
+
+      let barColor = 'bg-emerald-400';
+      let textColor = 'text-emerald-400';
+      if (state.wisdomPoints <= 5) {
+        barColor = 'bg-rose-500';
+        textColor = 'text-rose-400';
+      } else if (state.wisdomPoints <= 10) {
+        barColor = 'bg-amber-400';
+        textColor = 'text-amber-400';
+      }
+
+      return `
+        <div class="space-y-3 pb-4 border-b border-[#242019]">
+          <!-- Row 1: Case Pill, Restart, Wisdom Points Progress Bar -->
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+              <span class="px-3 py-1 rounded-md bg-amber-500 text-obsidian font-mono font-extrabold text-xs tracking-widest uppercase">
+                CASE ${state.caseIndex + 1} OF ${totalCases}
+              </span>
+              <button onclick="restartSession()"
+                class="px-2.5 py-1 rounded-md border border-[#2f2a20] bg-[#161410] hover:border-[#4b4334] text-[#9b9180] hover:text-[#f3efe6] font-mono text-xs uppercase tracking-wider transition">
+                RESTART
+              </button>
+            </div>
+
+            <!-- Lightning + 20T Bar -->
+            <div class="flex items-center gap-2.5 flex-1 sm:flex-initial justify-end min-w-[175px]">
+              <span class="text-amber-400 text-sm" aria-hidden="true">⚡</span>
+              <span class="font-mono font-extrabold text-sm ${textColor}">${state.wisdomPoints}T</span>
+              <div class="w-28 sm:w-36 h-2.5 rounded-full bg-[#221f19] overflow-hidden border border-[#2e2920]">
+                <div class="h-full ${barColor} transition-all duration-500 rounded-full" style="width: ${pct}%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Three Locked Virtue Badges (Justice, Mercy, Community) -->
+          <div class="grid grid-cols-3 gap-2">
+            ${['JUSTICE', 'MERCY', 'COMMUNITY']
+              .map(
+                (pillar) => `
+              <div class="py-1.5 px-2 rounded-full border border-[#2a261e] bg-[#14120e] flex items-center justify-center gap-1.5 text-[11px] font-mono tracking-widest text-[#8c8272]">
+                <svg class="w-3 h-3 text-[#6f6759]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+                <span>${pillar}</span>
+              </div>
+            `
+              )
+              .join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPrecedentRoll() {
+      if (state.precedents.length === 0) return '';
+      return `
+        <div class="rounded-xl border border-amber-500/45 bg-[#17140e] overflow-hidden animate-reveal">
+          <button onclick="togglePrecedentRoll()"
+            class="w-full px-4 py-2.5 flex items-center justify-between text-left hover:bg-amber-500/[0.04] transition">
+            <div class="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-amber-400">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+              </svg>
+              <span>PRECEDENT ROLL (${state.precedents.length})</span>
+            </div>
+            <span class="font-mono text-amber-400 text-sm">${state.precedentRollOpen ? '−' : '+'}</span>
+          </button>
+          ${
+            state.precedentRollOpen
+              ? `<div class="px-4 pb-3 pt-1 space-y-1.5 border-t border-amber-500/15">
+                  ${state.precedents
+                    .map(
+                      (p) => `
+                    <div class="text-xs sm:text-sm leading-snug">
+                      <span class="font-mono font-bold text-amber-400 mr-1.5">P${p.caseNum}:</span>
+                      <span class="italic text-[#e5dec9]">“${p.text}”</span>
+                    </div>
+                  `
+                    )
+                    .join('')}
+                </div>`
+              : ''
+          }
+        </div>
+      `;
+    }
+
+    function renderGameScreen() {
+      const c = getCurrentCase();
+      const rulingC = getActiveRulingC(c);
+      const bothIntegrated = state.heard && state.searched;
+      const canAffordHear = state.wisdomPoints >= c.hearCost;
+      const canAffordSearch = state.wisdomPoints >= c.searchCost;
+
+      return `
+        <div class="space-y-5 animate-reveal">
+          ${renderTopStatusHUD()}
+
+          ${renderPrecedentRoll()}
+
+          <!-- CASE BRIEF CARD -->
+          <section class="card-surface rounded-2xl p-5 sm:p-6 space-y-4">
+            <div class="flex items-start gap-3.5">
+              <div class="w-10 h-10 rounded-xl border border-amber-500/35 bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
+                ${getCaseIconSvg(c.icon)}
+              </div>
+              <div class="space-y-2">
+                <h2 class="text-xl sm:text-2xl font-bold text-[#f7f3eb] leading-snug">
+                  ${c.title}
+                </h2>
+                <div class="inline-block px-3 py-1 rounded-md border border-amber-500/40 bg-amber-500/[0.07] font-mono text-xs text-amber-400">
+                  ${c.scripture}
+                </div>
+              </div>
+            </div>
+
+            <p class="text-sm sm:text-base text-[#e6dfd2] leading-relaxed">
+              ${c.premise}
+            </p>
+          </section>
+
+          ${
+            state.rulingConfirmed
+              ? renderGateReaction(c)
+              : `
+            <!-- INVESTIGATION SECTION -->
+            <section class="space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-mono uppercase tracking-widest-plus text-[#8d8373]">
+                  INVESTIGATE — 5T PER ACTION
+                </span>
+                ${
+                  state.wisdomPoints === 0
+                    ? `<span class="text-[11px] font-mono text-rose-400">0T REMAINING — PROCEED TO RULING</span>`
+                    : ''
+                }
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <!-- HEAR BUTTON -->
+                <div>
+                  <button onclick="triggerHear()"
+                    ${state.heard || !canAffordHear ? 'disabled' : ''}
+                    class="w-full text-left p-4 rounded-xl border transition-all ${
+                      state.heard
+                        ? 'emerald-investigated cursor-default'
+                        : canAffordHear
+                        ? 'card-surface-interactive cursor-pointer'
+                        : 'bg-[#12100d] border-[#221f19] opacity-50 cursor-not-allowed'
+                    }">
+                    <div class="mb-2 ${state.heard ? 'text-emerald-400' : 'text-amber-400'}">
+                      <!-- Ear Icon -->
+                      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 8.5a6.5 6.5 0 1 1 13 0c0 6-6 6-6 10a3.5 3.5 0 1 1-7 0" />
+                        <path d="M15 8.5a2.5 2.5 0 0 0-5 0v1a2 2 0 1 1 0 4" />
+                      </svg>
+                    </div>
+                    <div class="font-mono font-bold text-xs sm:text-sm tracking-wider uppercase ${
+                      state.heard ? 'text-emerald-400' : 'text-[#f3efe6]'
+                    }">
+                      ${state.heard ? '✓ HEARD' : `HEAR (${c.hearCost}T)`}
+                    </div>
+                  </button>
+                  ${
+                    !state.heard && state.searched && canAffordHear
+                      ? `<p class="mt-1.5 text-[11px] italic text-[#9b9181] leading-snug">+5T to combine facts &amp; scripture (upgrades Ruling C)</p>`
+                      : ''
+                  }
+                </div>
+
+                <!-- SEARCH BUTTON -->
+                <div>
+                  <button onclick="triggerSearch()"
+                    ${state.searched || !canAffordSearch ? 'disabled' : ''}
+                    class="w-full text-left p-4 rounded-xl border transition-all ${
+                      state.searched
+                        ? 'emerald-investigated cursor-default'
+                        : canAffordSearch
+                        ? 'card-surface-interactive cursor-pointer'
+                        : 'bg-[#12100d] border-[#221f19] opacity-50 cursor-not-allowed'
+                    }">
+                    <div class="mb-2 ${state.searched ? 'text-emerald-400' : 'text-amber-400'}">
+                      <!-- Magnifier Icon -->
+                      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                      </svg>
+                    </div>
+                    <div class="font-mono font-bold text-xs sm:text-sm tracking-wider uppercase ${
+                      state.searched ? 'text-emerald-400' : 'text-[#f3efe6]'
+                    }">
+                      ${state.searched ? '✓ SEARCHED' : `SEARCH (${c.searchCost}T)`}
+                    </div>
+                  </button>
+                  ${
+                    state.heard && !state.searched && canAffordSearch
+                      ? `<p class="mt-1.5 text-[11px] italic text-[#9b9181] leading-snug">+5T to combine facts &amp; scripture (upgrades Ruling C)</p>`
+                      : ''
+                  }
+                </div>
+              </div>
+
+              <!-- REVEALED CLUE CARDS -->
+              ${
+                state.heard
+                  ? `
+                <div class="rounded-xl border border-[#2d281f] border-l-4 border-l-amber-500 bg-[#17140f] p-4 space-y-1.5 animate-reveal">
+                  <div class="font-mono text-[11px] font-bold uppercase tracking-widest text-amber-400">
+                    HEARD — HIDDEN FACT
+                  </div>
+                  <p class="text-sm sm:text-base text-[#f0eae0] leading-relaxed">
+                    ${c.hiddenFact}
+                  </p>
+                </div>
+              `
+                  : ''
+              }
+
+              ${
+                state.searched
+                  ? `
+                <div class="rounded-xl border border-[#22332a] border-l-4 border-l-emerald-400 bg-[#121915] p-4 space-y-1.5 animate-reveal">
+                  <div class="font-mono text-[11px] font-bold uppercase tracking-widest text-emerald-400">
+                    SEARCHED — SCRIPTURAL &amp; ETHICAL PRECEDENT
+                  </div>
+                  <p class="text-sm sm:text-base text-[#f0eae0] leading-relaxed">
+                    ${c.scripturalPrecedent}
+                  </p>
+                </div>
+              `
+                  : ''
+              }
+            </section>
+
+            <!-- OPTIONAL CLASSROOM POLL BAR -->
+            ${
+              state.classroomPollMode
+                ? `
+              <section class="rounded-xl border border-[#26221a] bg-[#13110d] px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+                <div class="text-[11px] font-mono uppercase tracking-wider text-[#978d7d]">
+                  Classroom Straw Poll:
+                </div>
+                <div class="flex items-center gap-2">
+                  ${['A', 'B', 'C']
+                    .map((opt) => {
+                      const disabledC = opt === 'C' && !rulingC;
+                      return `
+                        <div class="flex items-center gap-1 bg-[#191611] border border-[#2c271e] rounded-lg px-2 py-1 ${
+                          disabledC ? 'opacity-40' : ''
+                        }">
+                          <span class="font-mono text-xs font-bold text-amber-400">${opt}:</span>
+                          <span class="font-mono text-xs text-[#f3efe6] min-w-[1.25rem] text-center">${state.pollCounts[opt]}</span>
+                          <button onclick="adjustPoll('${opt}', 1)" ${disabledC ? 'disabled' : ''}
+                            class="w-5 h-5 rounded bg-[#252119] hover:bg-amber-500/20 text-xs font-bold text-[#d4cbbd] flex items-center justify-center">+</button>
+                          <button onclick="adjustPoll('${opt}', -1)" ${disabledC ? 'disabled' : ''}
+                            class="w-5 h-5 rounded bg-[#252119] hover:bg-rose-500/20 text-xs font-bold text-[#9c9281] flex items-center justify-center">−</button>
+                        </div>
+                      `;
+                    })
+                    .join('')}
+                </div>
+              </section>
+            `
+                : ''
+            }
+
+            <!-- RULINGS SECTION -->
+            <section class="space-y-3">
+              <div class="text-[11px] font-mono uppercase tracking-widest-plus text-[#8d8373]">
+                RULE — SET A PRECEDENT
+              </div>
+
+              ${['A', 'B'].map((key) => renderRulingCard(key, c.rulings[key], false)).join('')}
+
+              ${
+                rulingC
+                  ? renderRulingCard('C', rulingC, bothIntegrated)
+                  : `
+                <div class="rounded-xl border border-[#232019] bg-[#13110d] p-4 flex items-center gap-3.5 text-[#7a7163]">
+                  <svg class="w-4 h-4 text-amber-500/60 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                  <p class="text-xs sm:text-sm leading-relaxed">
+                    <span class="font-mono uppercase tracking-wider text-[#8e8474]">UNEXAMINED RULING</span> — Spend 5T on HEAR or SEARCH to uncover hidden facts or theological precedent.
+                  </p>
+                </div>
+              `
+              }
+            </section>
+          `
+          }
+        </div>
+      `;
+    }
+
+    function renderRulingCard(key, rulingObj, isIntegrated) {
+      const isSelected = state.selectedRulingKey === key;
+      return `
+        <div onclick="selectRuling('${key}')"
+          class="rounded-2xl p-5 cursor-pointer transition-all ${
+            isSelected ? 'ruling-selected' : 'card-surface-interactive'
+          }">
+          <div class="space-y-3">
+            <!-- Letter Badge -->
+            <div class="w-7 h-7 rounded-md border border-[#363026] bg-[#1f1c16] flex items-center justify-center font-mono font-bold text-xs text-[#f3efe6]">
+              ${key}
+            </div>
+
+            <div class="space-y-1.5">
+              <h3 class="text-base sm:text-lg font-bold text-[#f7f3eb] leading-snug">
+                ${rulingObj.title}
+              </h3>
+              <p class="text-xs sm:text-sm text-[#cfc6b6] leading-relaxed">
+                ${rulingObj.desc}
+              </p>
+            </div>
+
+            <p class="text-xs sm:text-sm italic text-amber-400/95">
+              Precedent: “${rulingObj.precedent}”
+            </p>
+
+            ${
+              isIntegrated
+                ? `
+              <div class="pt-0.5">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md border border-emerald-500/45 bg-emerald-500/10 font-mono text-[11px] font-bold uppercase tracking-wider text-emerald-400">
+                  <span>✓ FACTS + SCRIPTURE INTEGRATED</span>
+                </span>
+              </div>
+            `
+                : ''
+            }
+
+            ${
+              isSelected
+                ? `
+              <div class="pt-3 mt-3 border-t border-dashed border-[#383126] space-y-3 animate-reveal" onclick="event.stopPropagation()">
+                <div class="text-sm font-bold text-[#f5f0e6]">Confirm this ruling?</div>
+                <div class="flex flex-col gap-2">
+                  <button onclick="confirmRuling()"
+                    class="w-full py-3.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-obsidian font-mono font-extrabold text-xs sm:text-sm uppercase tracking-widest-plus transition shadow-md shadow-amber-500/20">
+                    CONFIRM
+                  </button>
+                  <button onclick="cancelRuling()"
+                    class="w-full py-3 px-4 rounded-xl border border-[#2f2a20] bg-[#14120e] hover:bg-[#1c1914] text-[#9b9180] hover:text-[#f3efe6] font-mono text-xs uppercase tracking-widest-plus transition">
+                    CANCEL
+                  </button>
+                </div>
+              </div>
+            `
+                : ''
+            }
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGateReaction(c) {
+      const chosen = getRulingObject(c, state.selectedRulingKey);
+      const isFinalCase = state.caseIndex + 1 >= getCurrentSet().cases.length;
+
+      return `
+        <section class="card-surface rounded-2xl p-5 sm:p-6 space-y-5 animate-reveal">
+          <div class="space-y-3">
+            <div class="font-mono text-xs font-bold uppercase tracking-widest-plus text-amber-400">
+              THE GATE REACTS
+            </div>
+
+            <p class="text-sm sm:text-base text-[#f2ece1] leading-relaxed">
+              ${chosen.reaction}
+            </p>
+
+            <p class="text-xs sm:text-sm italic text-amber-400/95">
+              Precedent inscribed: “${chosen.precedent}”
+            </p>
+          </div>
+
+          <button onclick="nextCase()"
+            class="w-full py-4 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-[0.99] text-obsidian font-mono font-extrabold text-sm uppercase tracking-widest-plus transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20">
+            <span>${isFinalCase ? 'CONCLUDE SESSION & UNLOCK VIRTUES' : 'NEXT CASE'}</span>
+            <span>→</span>
+          </button>
+        </section>
+      `;
+    }
+
+    function determineEthicistProfile() {
+      const { justice, mercy, community } = state.scores;
+      const total = justice + mercy + community;
+      const integratedCount = state.history.filter((h) => h.heard && h.searched).length;
+
+      if (integratedCount >= 2 && total >= 24) {
+        return {
+          archetype: 'Prophetic Synthesizer at the Gate',
+          description:
+            'You united empirical discernment (HEAR) with deep scriptural-philosophical hermeneutics (SEARCH), refusing false binaries between justice and mercy.'
+        };
+      }
+      if (justice >= mercy && justice >= community) {
+        return {
+          archetype: 'Covenantal Jurist of Righteous Order',
+          description:
+            'Your rulings prioritized impartial accountability, structural integrity, and fidelity to moral law even under social pressure.'
+        };
+      }
+      if (mercy > justice && mercy >= community) {
+        return {
+          archetype: 'Shepherd of Redemptive Compassion',
+          description:
+            'You consistently shielded the vulnerable from rigid legalism, insisting that statutes exist to serve human dignity and life.'
+        };
+      }
+      return {
+        archetype: 'Architect of Civic Shalom & Ubuntu',
+        description:
+          'Your jurisprudence focused on repairing social trust, preventing factional fracture, and sustaining harmony across the whole community.'
+      };
+    }
+
+    function renderSummaryScreen() {
+      const profile = determineEthicistProfile();
+      const set = getCurrentSet();
+
+      const normalizePct = (val) => Math.max(12, Math.min(100, Math.round(((val + 6) / 18) * 100)));
+
+      return `
+        <div class="space-y-6 animate-reveal">
+          <!-- Unlocked Virtues Header -->
+          <div class="card-surface rounded-2xl p-6 sm:p-7 space-y-5 relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.06] via-transparent to-amber-500/[0.06] pointer-events-none"></div>
+            <div class="relative space-y-4">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-400 font-mono text-[11px] font-bold uppercase tracking-widest">
+                <span>✓ SESSION COMPLETE • VIRTUES UNLOCKED</span>
+              </div>
+
+              <div>
+                <div class="text-xs font-mono uppercase tracking-widest text-[#9c9281]">Jurisprudential Profile</div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-[#f7f3eb] mt-1">${profile.archetype}</h2>
+                <p class="text-sm sm:text-base text-[#cfc6b6] mt-2 leading-relaxed">${profile.description}</p>
+              </div>
+
+              <!-- Three Unlocked Pillar Meters -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                ${[
+                  { label: 'JUSTICE', val: state.scores.justice, color: 'bg-amber-400', text: 'text-amber-400' },
+                  { label: 'MERCY', val: state.scores.mercy, color: 'bg-emerald-400', text: 'text-emerald-400' },
+                  { label: 'COMMUNITY', val: state.scores.community, color: 'bg-sky-400', text: 'text-sky-400' }
+                ]
+                  .map(
+                    (p) => `
+                  <div class="rounded-xl border border-[#2b261e] bg-[#110f0c] p-3.5 space-y-2">
+                    <div class="flex items-center justify-between font-mono text-xs">
+                      <span class="font-bold tracking-widest text-[#e6dfd3]">${p.label}</span>
+                      <span class="font-extrabold ${p.text}">${p.val >= 0 ? '+' + p.val : p.val}</span>
+                    </div>
+                    <div class="w-full h-2 rounded-full bg-[#211e18] overflow-hidden">
+                      <div class="h-full ${p.color} rounded-full" style="width: ${normalizePct(p.val)}%"></div>
+                    </div>
+                  </div>
+                `
+                  )
+                  .join('')}
+              </div>
+
+              <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#26221a] text-xs font-mono text-[#9c9281]">
+                <span>WISDOM REMAINING: <strong class="text-amber-400">${state.wisdomPoints}T</strong> / 20T</span>
+                <span>MODULE: <strong class="text-[#e6dfd3]">${set.title}</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Complete Inscribed Precedent Roll for Classroom Debrief -->
+          <div class="card-surface rounded-2xl p-5 sm:p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-mono text-xs font-bold uppercase tracking-widest-plus text-amber-400">
+                INSCRIBED CLASSROOM PRECEDENT ROLL
+              </h3>
+              <span class="text-[11px] font-mono text-[#8b8171]">For Seminar Debrief</span>
+            </div>
+
+            <div class="space-y-3">
+              ${state.history
+                .map(
+                  (item) => `
+                <div class="rounded-xl border border-[#29241c] bg-[#12100c] p-4 space-y-2">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="font-mono text-xs font-bold text-amber-400">
+                      CASE ${item.caseNum} • RULING ${item.rulingKey}
+                    </span>
+                    <div class="flex items-center gap-1.5 text-[10px] font-mono">
+                      ${
+                        item.heard
+                          ? '<span class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">HEARD</span>'
+                          : ''
+                      }
+                      ${
+                        item.searched
+                          ? '<span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">SEARCHED</span>'
+                          : ''
+                      }
+                    </div>
+                  </div>
+                  <div class="font-bold text-sm sm:text-base text-[#f4efe6]">${item.caseTitle}</div>
+                  <div class="text-xs text-[#a59b8a]">Decision: ${item.rulingTitle}</div>
+                  <div class="text-xs sm:text-sm italic text-amber-300/95 pt-1 border-t border-[#221e17]">
+                    P${item.caseNum}: “${item.precedent}”
+                  </div>
+                </div>
+              `
+                )
+                .join('')}
+            </div>
+          </div>
+
+          <!-- Classroom Discussion Prompts for Rev. Anand S. Deshbhratar -->
+          <div class="card-surface rounded-2xl p-5 sm:p-6 space-y-3">
+            <div class="font-mono text-xs font-bold uppercase tracking-widest-plus text-emerald-400">
+              FACULTY SEMINAR DEBRIEF QUESTIONS
+            </div>
+            <ul class="space-y-2 text-xs sm:text-sm text-[#d4cbbd] list-disc pl-5 leading-relaxed">
+              <li>Where did limited Wisdom Points (20T) force our class to rely on unexamined assumptions?</li>
+              <li>How did uncovering hidden human facts (HEAR) alter our reading of the authoritative texts (SEARCH)?</li>
+              <li>Do our three inscribed precedents form a coherent moral philosophy, or do they stand in creative tension?</li>
+            </ul>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button onclick="restartSession()"
+              class="py-3.5 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-obsidian font-mono font-extrabold text-xs sm:text-sm uppercase tracking-widest-plus transition">
+              REPLAY THIS MODULE
+            </button>
+            <button onclick="returnToTitle()"
+              class="py-3.5 px-5 rounded-xl border border-[#2f2a20] bg-[#161410] hover:border-amber-500/40 text-[#f3efe6] font-mono font-bold text-xs sm:text-sm uppercase tracking-widest-plus transition">
+              SWITCH CASE MODULE
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function render() {
+      const app = document.getElementById('appContainer');
+      if (state.screen === 'title') {
+        app.innerHTML = renderTitleScreen();
+      } else if (state.screen === 'game') {
+        app.innerHTML = renderGameScreen();
+      } else if (state.screen === 'summary') {
+        app.innerHTML = renderSummaryScreen();
+      }
+    }
+
+    window.onload = function () {
+      render();
+    };
+  </script>
+</body>
+</html>
